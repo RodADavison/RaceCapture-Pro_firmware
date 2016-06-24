@@ -23,6 +23,7 @@
 #define _CHANNEL_CONFIG_H_
 
 #include "cpp_guard.h"
+#include <stdbool.h>
 
 CPP_GUARD_BEGIN
 
@@ -39,13 +40,17 @@ CPP_GUARD_BEGIN
 #define ALWAYS_SAMPLED 1 << 0
 
 typedef struct _ChannelConfig {
-    char label[DEFAULT_LABEL_LENGTH];
-    char units[DEFAULT_UNITS_LENGTH];
-    float min;
-    float max;
-    unsigned short sampleRate;
-    unsigned char precision;
-    unsigned char flags;
+        char label[DEFAULT_LABEL_LENGTH];
+        char units[DEFAULT_UNITS_LENGTH];
+        float min;
+        float max;
+        float crit_high;
+        float crit_low;
+        float warn_high;
+        float warn_low;
+        unsigned short sampleRate;
+        unsigned char precision;
+        unsigned char flags;
 } ChannelConfig;
 
 enum chan_cfg_status {
@@ -64,6 +69,7 @@ enum chan_cfg_status validate_channel_config_label(const char *label);
 enum chan_cfg_status validate_channel_config_units(const char *units);
 enum chan_cfg_status validate_channel_config(const ChannelConfig *cc);
 void set_default_channel_config(ChannelConfig *cc);
+bool channel_config_is_crit_warn_valid(const float val);
 
 CPP_GUARD_END
 

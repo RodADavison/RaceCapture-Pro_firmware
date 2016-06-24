@@ -21,8 +21,11 @@
 
 #include "channel_config.h"
 #include "loggerConfig.h"
+#include <math.h>
 #include <string.h>
 #include <string.h>
+
+#define INVALID_CRIT_WARN_VAL	HUGE_VAL
 
 /**
  * Creates a new default ChannelConfig.  It is not ready to use because
@@ -35,6 +38,10 @@ void channel_config_defaults(ChannelConfig *cc)
         memset(cc, 0, sizeof(ChannelConfig));
         cc->min = DEFAULT_CHANNEL_MIN;
         cc->max = DEFAULT_CHANNEL_MAX;
+        cc->crit_high = INVALID_CRIT_WARN_VAL;
+        cc->crit_low  = INVALID_CRIT_WARN_VAL;
+        cc->warn_high = INVALID_CRIT_WARN_VAL;
+        cc->warn_log  = INVALID_CRIT_WARN_VAL;
 }
 
 /**
@@ -111,4 +118,15 @@ void set_default_channel_config(ChannelConfig *cc)
 {
         memset(cc, 0, sizeof(ChannelConfig));
         cc->sampleRate = SAMPLE_DISABLED;
+}
+
+/**
+ * Tells the caller if the critical or warning value from the channel config
+ * structure has been set / is valid.
+ * @param val the value to check.
+ * @return true if it is valid, false otherwise.
+ */
+bool channel_config_is_crit_warn_valid(const float val)
+{
+        return val != INVALID_CRIT_WARN_VAL;
 }
