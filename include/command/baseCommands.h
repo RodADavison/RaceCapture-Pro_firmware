@@ -37,14 +37,17 @@ CPP_GUARD_BEGIN
         SYSTEM_COMMAND("showStats", "Info on system statistics.","",    \
                        ShowStats)                                       \
         SYSTEM_COMMAND("sysReset", "Reset the system",                  \
-                       "[bootloader 0|1]", ResetSystem)
+                       "[bootloader 0|1]", ResetSystem)                 \
+        SYSTEM_COMMAND("testPrintf", "Test Printf", "",                 \
+                       basecmd_test_printf)                             \
 
 
 void ShowTaskInfo(struct Serial *serial, unsigned int argc, char **argv);
 void GetVersion(struct Serial *serial, unsigned int argc, char **argv);
 void ShowStats(struct Serial *serial, unsigned int argc, char **argv);
 void ResetSystem(struct Serial *serial, unsigned int argc, char **argv);
-
+void basecmd_test_printf(struct Serial *serial, unsigned int argc,
+                         char **argv);
 CPP_GUARD_END
 
 #endif /* BASECOMMANDS_H_ */

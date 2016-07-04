@@ -31,6 +31,7 @@
 #include "memory.h"
 #include "task.h"
 #include <stdbool.h>
+#include <stdio.h>
 
 extern unsigned int _CONFIG_HEAP_SIZE;
 
@@ -129,4 +130,23 @@ void ResetSystem(struct Serial *serial, unsigned int argc, char **argv)
 {
         const bool into_bootldr = argc == 2 && argv[1][0] != '0';
         cpu_reset(into_bootldr);
+}
+
+void basecmd_test_printf(struct Serial *serial, unsigned int argc,
+                         char **argv)
+{
+        putHeader(serial, "Printf Test");
+        const double val = 123.4567890123;
+        char buf[30];
+
+        sprintf(buf, "Int: %d\r\n", (int) val);
+        serial_put_s(serial, buf);
+
+        sprintf(buf, "Float: %f\r\n", (float) val);
+        serial_put_s(serial, buf);
+
+        sprintf(buf, "Double: %3.10f\r\n", val);
+        serial_put_s(serial, buf);
+
+        put_crlf(serial);
 }
