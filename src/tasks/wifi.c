@@ -498,7 +498,9 @@ static void do_beacon()
 
 static void process_sample(struct wifi_sample_data* data)
 {
-        struct Serial* serial = data->serial;
+	/* struct Serial* serial = data->serial; */
+	/* Temporarily use UDP socket */
+	struct Serial* serial = state.beacon.serial;
         const struct sample* sample = data->sample;
         const size_t ticks = data->tick;
         const bool meta = ticks == 0;
