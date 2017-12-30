@@ -43,10 +43,8 @@ void setGpsDataLogging(bool enable)
 
 void GPSTask(void *pvParameters)
 {
-        LoggerConfig *lc = getWorkingLoggerConfig();
         struct Serial *serial = serial_device_get(SERIAL_GPS);
-        const uint8_t targetSampleRate =
-                decodeSampleRate(lc->GPSConfigs.speed.sampleRate);
+        const uint8_t targetSampleRate = decodeSampleRate(logger_config_get_gps_sample_rate());
 
         /* Call this here to effectively reset lapstats */
         lapstats_config_changed();
@@ -70,7 +68,7 @@ void GPSTask(void *pvParameters)
                         } else {
                                 pr_debug("GPS: Msx Rx Failure\r\n");
                                 if (++failures >= MSG_FAILURES_TRIGGER) {
-                                        pr_warning("GPS: Too many failures.  "
+                                        pr_debug("GPS: Too many failures.  "
                                                    "Reenum\r\n");
                                         break;
                                 }

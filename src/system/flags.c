@@ -63,11 +63,15 @@ static const char* feature_flags[] = {
 #if CELLULAR_SUPPORT
         FEATURE_FLAG("cell")
 #endif
-#if GPIO_CHANNELS > 0
+#if GPIO_CHANNELS > 1
         FEATURE_FLAG("gpio")
 #endif
+#if GPS_HARDWARE_SUPPORT
         FEATURE_FLAG("gps")
+#endif
+#if IMU_CHANNELS > 0
         FEATURE_FLAG("imu")
+#endif
 #if LUA_SUPPORT > 0
         FEATURE_FLAG("lua")
 #endif

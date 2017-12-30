@@ -344,11 +344,13 @@ typedef struct _CANMapping {
 
     /* the conversion filter to apply to quickly convert units without changing mapping */
     uint8_t conversion_filter_id;
+
+    /* sub ID index. If defined (>=0) then this uses the first byte to mach on a sub address */
+    int8_t sub_id;
 } CANMapping;
 
 typedef struct _CANChannel {
     /* The standard channel configuration */
-    ChannelConfig channel_cfg;
     CANMapping mapping;
 } CANChannel;
 
@@ -382,14 +384,16 @@ typedef struct _OBD2Config {
 } OBD2Config;
 
 typedef struct _GPSConfig {
+#if GPS_HARDWARE_SUPPORT
     ChannelConfig latitude;
     ChannelConfig longitude;
     ChannelConfig speed;
-    ChannelConfig distance;
     ChannelConfig altitude;
     ChannelConfig satellites;
     ChannelConfig quality;
     ChannelConfig DOP;
+#endif
+    ChannelConfig distance;
 } GPSConfig;
 
 #define DEFAULT_GPS_SAMPLE_RATE SAMPLE_10Hz
@@ -403,16 +407,22 @@ typedef struct _GPSConfig {
 #define DEFAULT_GPS_QUALITY_CONFIG {"GPSQual", "", 0, 5, DEFAULT_GPS_SAMPLE_RATE, 0, 0}
 #define DEFAULT_GPS_DOP_CONFIG {"GPSDOP", "", 0, 20, DEFAULT_GPS_SAMPLE_RATE, 1, 0}
 
-#define DEFAULT_GPS_CONFIG {                   \
+#if GPS_HARDWARE_SUPPORT
+#define DEFAULT_GPS_CONFIG {             \
 		DEFAULT_GPS_LATITUDE_CONFIG,           \
 		DEFAULT_GPS_LONGITUDE_CONFIG,          \
 		DEFAULT_GPS_SPEED_CONFIG,              \
-		DEFAULT_GPS_DISTANCE_CONFIG,           \
 		DEFAULT_GPS_ALTITUDE_CONFIG,           \
 		DEFAULT_GPS_SATELLITE_CONFIG,          \
 		DEFAULT_GPS_QUALITY_CONFIG,            \
-		DEFAULT_GPS_DOP_CONFIG                 \
-         }
+		DEFAULT_GPS_DOP_CONFIG,                \
+  DEFAULT_GPS_DISTANCE_CONFIG            \
+}
+#else
+#define DEFAULT_GPS_CONFIG {             \
+  DEFAULT_GPS_DISTANCE_CONFIG            \
+}
+#endif
 
 typedef struct _LapConfig {
     ChannelConfig lapCountCfg;
@@ -519,9 +529,6 @@ typedef struct _LoggerConfig {
     /* stores the version of this firmware */
     VersionInfo RcpVersionInfo;
 
-    //PWM/Analog out configurations
-    unsigned short PWMClockFrequency;
-
     // Time Config
     struct TimeConfig TimeConfigs[CONFIG_TIME_CHANNELS];
 
@@ -532,10 +539,12 @@ typedef struct _LoggerConfig {
 
 #if PWM_CHANNELS > 0
     //PWM configuration
+    //PWM/Analog out configurations
+    unsigned short PWMClockFrequency;
     PWMConfig PWMConfigs[CONFIG_PWM_CHANNELS];
 #endif
 
-#if GPIO_CHANNELS > 0
+#if GPIO_CHANNELS > 1
     //GPIO configurations
     GPIOConfig GPIOConfigs[CONFIG_GPIO_CHANNELS];
 #endif
@@ -628,6 +637,7 @@ void reset_logger_config(void);
 int flash_default_logger_config(void);
 
 void logger_config_reset_gps_config(GPSConfig *cfg);
+uint16_t logger_config_get_gps_sample_rate(void);
 
 enum CANMappingType filter_can_mapping_type(enum CANMappingType type);
 
